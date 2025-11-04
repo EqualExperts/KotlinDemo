@@ -22,7 +22,7 @@ dependencies {
     // Rest Client Support
     implementation("io.quarkus:quarkus-rest-client-jackson")
 
-    implementation("io.quarkiverse.wiremock:quarkus-wiremock:1.4.1")
+    implementation("io.quarkiverse.wiremock:quarkus-wiremock:1.5.1")
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
