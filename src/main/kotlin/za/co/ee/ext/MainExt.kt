@@ -19,9 +19,10 @@ fun main(args: Array<String>) {
 
 }
 
+@Suppress("ReturnCount")
 fun isValidString(example: String?): Boolean {
     // Works even on a null as the isNullOrEmpty tests for a null receiver. E.g you can call the method on a null
-    // This is because, while this look like typical OO function call on an object, it's actually not...
+    // This is because, while this looks like a typical OO function call on an object, it's actually not...
     // It's a static function call passing it the string value.
     if (example.isNullOrEmpty()) return false
 

@@ -1,7 +1,4 @@
-package org.example.za.co.ee.constructors
-
-import za.co.ee.constructors.AnyClassName
-import za.co.ee.constructors.Constructors
+package za.co.ee.constructors
 
 // Constructors. Primary and secondary
 // Default and named parameters
@@ -36,12 +33,14 @@ fun main() {
     // Default values for parameters
     // I can call the constructor with less parameters than specified in the constructor if there are default values
     // The default values are used for the missing parameters
-    val constructorPrimaryDefaults = za.co.ee.constructors.Constructors("Primary Constructor", "With Defaults")
-    println("External view - Constructor name ${constructorPrimaryDefaults.name} age doubled ${constructorPrimaryDefaults.ageDoubled}")
+    val constructorPrimaryDefaults = Constructors("Primary Constructor", "With Defaults")
+    println("External view - Constructor name ${constructorPrimaryDefaults.name} age " +
+            "doubled ${constructorPrimaryDefaults.ageDoubled}")
 
 
     // Using secondary constructor
-    var constructorSecondary = za.co.ee.constructors.Constructors("Secondary Constructor")
+    var constructorSecondary = Constructors("Secondary Constructor")
+    println("Constructor name ${constructorSecondary.name} age ${constructorSecondary.ageDoubled}")
 
     // Named parameters
     // These help to avoid mistakes and make the code more readable
@@ -49,9 +48,9 @@ fun main() {
     val constructorFourth = Constructors(secondary = "Bob", height = 180)
     println("Constructor name ${constructorFourth.name} age ${constructorFourth.ageDoubled}")
 
-    // or named in order to use defaults
-    val constructor5 = za.co.ee.constructors.Constructors(height = 180)
+    // or using the named param in order to use the defaults for the other parameters.
+    val constructor5 = Constructors(height = 180)
     println("Constructor name ${constructor5.name} age ${constructor5.ageDoubled}")
-    //val constructor6 = za.co.ee.constructors.Contructors(25) // Doesn't work
+    //val constructor6 = Constructors(25) // Doesn't work
 
 }

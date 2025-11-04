@@ -10,7 +10,8 @@ package za.co.ee.scopefunctions
     // let - executes a block of code and returns the result of the last expression
     // apply - executes a block of code on an object and returns the object itself
     // run - executes a block of code on an object and returns the result of the last expression
-    // with - executes a block of code with a given receiver as its receiver and returns the result of the last expression
+    // with - executes a block of code with a given receiver as its receiver and returns the result of
+    //        the last expression
     // also - executes a block of code on an object and returns the object itself
 
 fun main() {
@@ -44,9 +45,11 @@ fun main() {
     val car = nullPerson?.let {
         Car(it.name)
     }
+    println("Car could be null here:  $car")
 
     // Equivalent to
     val car2 = if (nullPerson != null) Car(nullPerson.name) else null
+    println("Car2 could be null here: $car2")
 
 }
 

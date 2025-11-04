@@ -27,6 +27,7 @@ fun main() {
 }
 
 class Nulls {
+    @Suppress("FunctionOnlyReturningConstant")
     fun calculate(): Int {
         return 5
     }

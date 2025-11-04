@@ -6,7 +6,7 @@ package za.co.ee.objects
 
 // Singleton class (static class but implemented as a singleton under the hood)
 object MySingleton {
-    val name = "MySingleton"
+    const val name = "MySingleton"
 }
 
 
@@ -15,7 +15,8 @@ class MyClassWithCompanion {
     val name = "MyClassWithCompanion"
     // Companion object is a named object that can be referenced as MyClassWithCompanion.Companion
     companion object {
-        val staticLikeField = "static like field"
+        const val staticLikeField = "static like field"
+        var anotherStaticLikeField = "another static like field"
     }
 }
 

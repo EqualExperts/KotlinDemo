@@ -14,7 +14,7 @@ Kotlin provides a concise way to define constructors and initialize properties:
 - **Default Parameter Values**: Simplify constructor overloading
 - **Property Initialization**: Using constructor parameters
 
-Example: [Contructors.kt](src/main/kotlin/za/co/ee/constructors/Constructors.kt)
+Example: [Constructors.kt](src/main/kotlin/za/co/ee/constructors/Constructors.kt)
 
 ### Getters and Setters
 

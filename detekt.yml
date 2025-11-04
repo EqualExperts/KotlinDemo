@@ -1,0 +1,19 @@
+# This is the detekt configuration file.
+# It disables the MagicNumber rule to avoid having to use @Suppress("MagicNumber") annotations.
+# For more information about detekt configuration, see:
+# https://detekt.dev/docs/introduction/configurations/
+
+style:
+  MagicNumber:
+    active: false
+    ignoreNumbers: ['-1', '0', '1', '2']
+    ignoreHashCodeFunction: true
+    ignorePropertyDeclaration: true
+    ignoreLocalVariableDeclaration: true
+    ignoreConstantDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotation: true
+    ignoreNamedArgument: true
+    ignoreEnums: true
+    ignoreRanges: true
+    ignoreExtensionFunctions: true
