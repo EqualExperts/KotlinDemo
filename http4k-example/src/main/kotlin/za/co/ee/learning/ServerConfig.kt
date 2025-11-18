@@ -1,0 +1,10 @@
+package za.co.ee.learning
+
+data class ServerConfig(
+    val port: Int = 8080,
+    val jwtSecret: String = "mysupersecret",
+    val jwtIssuer: String = "http4k",
+    val jwtExpirationSeconds: Long = 120,
+    val enableDebugFilters: Boolean = true,
+    val enableMetrics: Boolean = true,
+)
