@@ -19,8 +19,9 @@ import za.co.ee.learning.infrastructure.security.JWTFilter
 import za.co.ee.learning.infrastructure.server.ContentTypeFilter
 
 class Server(
-    private val config: ServerConfig = ServerConfig(),
+    config: ServerConfig = ServerConfig(),
 ) {
+    private val logger = mu.KotlinLogging.logger {}
     private val passwordProvider = BCryptPasswordProvider()
     private val userRepository = InMemoryUserRepository()
     private val jwtProvider = DefaultJWTProvider(config.jwtSecret, config.jwtIssuer, config.jwtExpirationSeconds)
@@ -60,6 +61,15 @@ class Server(
 
     fun start(): Server {
         netty.start()
+
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                logger.info { "Shutdown signal received, stopping server gracefully..." }
+                stop()
+                logger.info { "Server stopped successfully" }
+            },
+        )
+
         return this
     }
 

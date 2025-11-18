@@ -27,12 +27,14 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // Http4k
-    implementation("org.http4k:http4k-core:$http4kVersion")
-    implementation("org.http4k:http4k-server-netty:$http4kVersion")
-    implementation("org.http4k:http4k-format-jackson:$http4kVersion")
-    implementation("org.http4k:http4k-client-okhttp:$http4kVersion")
-    implementation("org.http4k:http4k-api-openapi:$http4kVersion")
-    implementation("org.http4k:http4k-api-ui-swagger:$http4kVersion")
+    implementation(platform("org.http4k:http4k-bom:$http4kVersion"))
+    implementation("org.http4k:http4k-core")
+    implementation("org.http4k:http4k-server-netty")
+    implementation("org.http4k:http4k-format-jackson")
+//    implementation("org.http4k:http4k-client-okhttp:$http4kVersion")
+    implementation("org.http4k:http4k-config")
+    implementation("org.http4k:http4k-api-openapi")
+    implementation("org.http4k:http4k-api-ui-swagger")
 
     // Config
     implementation("com.sksamuel.hoplite:hoplite-core:2.9.0")

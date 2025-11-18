@@ -49,7 +49,6 @@ object HealthEndpoint {
             Response(Status.OK).with(healthLens of HealthResponse("UP", "http4k-api"))
         }
 
-
     val readinessRoute: ContractRoute =
         "/health/ready" meta {
             summary = "Readiness Probe"

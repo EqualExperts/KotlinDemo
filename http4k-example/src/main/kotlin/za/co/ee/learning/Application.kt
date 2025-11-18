@@ -10,14 +10,17 @@ import za.co.ee.learning.infrastructure.server.Server
 fun main() {
     val logger = KotlinLogging.logger {}
 
-    val config = ConfigLoaderBuilder.default()
-        .addResourceSource("/application.yml")
-        .addPropertySource(EnvironmentVariablesPropertySource(
-            useUnderscoresAsSeparator = true,
-            allowUppercaseNames = true
-        ))
-        .build()
-        .loadConfigOrThrow<ServerConfig>()
+    val config =
+        ConfigLoaderBuilder
+            .default()
+            .addResourceSource("/application.yml")
+            .addPropertySource(
+                EnvironmentVariablesPropertySource(
+                    useUnderscoresAsSeparator = true,
+                    allowUppercaseNames = true,
+                ),
+            ).build()
+            .loadConfigOrThrow<ServerConfig>()
 
     Server(config).start()
 
