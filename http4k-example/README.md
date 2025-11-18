@@ -2,6 +2,8 @@
 
 A production-ready RESTful API built with http4k demonstrating clean architecture, JWT authentication, and OpenAPI documentation.
 
+It is hard to find a good example of a production-ready REST API built with Kotlin and http4k. This project aims to fill that gap.
+
 ## Features
 
 - **JWT Authentication** - Secure endpoints with bearer token authentication
@@ -22,6 +24,13 @@ A production-ready RESTful API built with http4k demonstrating clean architectur
 - **Testing**: Kotest, MockK, REST Assured
 - **Observability**: Micrometer, OpenTelemetry
 - **Code Quality**: ktlint
+
+## NOTE
+
+1. The authenticate endpoint should not be taken as best practise. The intent here is to show a flow of business logic across multiple components.
+2. This project uses unsafe CORS settings for demonstration purposes only. Do not use this in production.
+3. There is no configuration loading from environment variables or external configuration files. This is intentional to keep the example simple. Look at [Hoplite](https://github.com/sksamuel/hoplite) for such a library.
+4. This project has hard coded secrets in it. Do not use hard coded secrets in production.
 
 ## Architecture
 

@@ -1,6 +1,5 @@
 package za.co.ee.learning.infrastructure.api
 
-import kotlinx.serialization.Serializable
 import org.http4k.contract.ContractRoute
 import org.http4k.contract.meta
 import org.http4k.core.Body
@@ -9,9 +8,8 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.core.with
-import org.http4k.format.KotlinxSerialization.auto
+import org.http4k.format.Jackson.auto
 
-@Serializable
 data class HealthResponse(
     val status: String,
     val service: String,

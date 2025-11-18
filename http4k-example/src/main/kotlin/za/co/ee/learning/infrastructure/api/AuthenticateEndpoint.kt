@@ -9,7 +9,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.core.with
-import org.http4k.format.KotlinxSerialization.auto
+import org.http4k.format.Jackson.auto
 import za.co.ee.learning.domain.security.JWTProvider
 import za.co.ee.learning.domain.security.PasswordProvider
 import za.co.ee.learning.domain.users.UserRepository

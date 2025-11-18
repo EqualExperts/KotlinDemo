@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm") version "2.1.20"
-    kotlin("plugin.serialization") version "2.1.20"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     application
 }
@@ -19,7 +18,6 @@ val jbcryptVersion: String by project
 val kotestArrowVersion: String by project
 val kotestVersion: String by project
 val kotlinLoggingVersion: String by project
-val kotlinSerializationVersion: String by project
 val logbackVersion: String by project
 val mockkVersion: String by project
 val restAssuredVersion: String by project
@@ -31,18 +29,14 @@ dependencies {
     // Http4k
     implementation("org.http4k:http4k-core:$http4kVersion")
     implementation("org.http4k:http4k-server-netty:$http4kVersion")
-    implementation("org.http4k:http4k-format-kotlinx-serialization:$http4kVersion")
     implementation("org.http4k:http4k-format-jackson:$http4kVersion")
     implementation("org.http4k:http4k-client-okhttp:$http4kVersion")
     implementation("org.http4k:http4k-api-openapi:$http4kVersion")
     implementation("org.http4k:http4k-api-ui-swagger:$http4kVersion")
 
-    implementation("org.http4k:http4k-ops-micrometer:$http4kVersion")
-    implementation("org.http4k:http4k-ops-opentelemetry:$http4kVersion")
-    implementation("org.http4k:http4k-ops-resilience4j:$http4kVersion")
-
-    // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
+    // Config
+    implementation("com.sksamuel.hoplite:hoplite-core:2.9.0")
+    runtimeOnly("com.sksamuel.hoplite:hoplite-yaml:2.9.0")
 
     // Logging
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")

@@ -14,9 +14,18 @@ class JWTFilter(
 ) : Filter {
     override fun invoke(next: HttpHandler): HttpHandler =
         { request ->
+            val path = request.uri.path
             when {
-                excludedPaths.contains(request.uri.path) -> next(request)
+                isPathExcluded(path) -> next(request)
                 else -> verifyToken(request, next)
+            }
+        }
+
+    private fun isPathExcluded(path: String): Boolean =
+        excludedPaths.any { excludedPath ->
+            when {
+                excludedPath.endsWith("/*") -> path.startsWith(excludedPath.removeSuffix("/*"))
+                else -> path == excludedPath
             }
         }
 

@@ -4,7 +4,6 @@ import arrow.core.Option
 import arrow.core.left
 import arrow.core.raise.either
 import arrow.core.right
-import kotlinx.serialization.Serializable
 import za.co.ee.learning.domain.DomainError
 import za.co.ee.learning.domain.DomainResult
 import za.co.ee.learning.domain.Validation
@@ -14,13 +13,11 @@ import za.co.ee.learning.domain.security.TokenInfo
 import za.co.ee.learning.domain.users.User
 import za.co.ee.learning.domain.users.UserRepository
 
-@Serializable
 data class AuthenticateRequest(
     val email: String,
     val password: String,
 )
 
-@Serializable
 data class AuthenticateResponse(
     val token: String,
     val expires: Long,

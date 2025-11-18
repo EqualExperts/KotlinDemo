@@ -1,6 +1,7 @@
 package za.co.ee.learning
 
 import mu.KotlinLogging
+import za.co.ee.learning.infrastructure.server.Server
 
 fun main() {
     val logger = KotlinLogging.logger {}

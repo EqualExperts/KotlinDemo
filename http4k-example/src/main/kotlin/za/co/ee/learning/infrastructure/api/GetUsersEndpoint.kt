@@ -9,8 +9,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.core.with
-import org.http4k.format.KotlinxSerialization.auto
-import org.http4k.security.BearerAuthSecurity
+import org.http4k.format.Jackson.auto
 import za.co.ee.learning.domain.users.UserRepository
 import za.co.ee.learning.domain.users.usecases.GetUsers
 import za.co.ee.learning.domain.users.usecases.UserDto
@@ -35,7 +34,6 @@ class GetUsersEndpoint(
         "/api/v1/users" meta {
             summary = "Get Users"
             description = "Retrieves list of all users (requires JWT authentication)"
-            security = BearerAuthSecurity("JWT Bearer Token")
             returning(
                 Status.OK,
                 usersResponseLens to

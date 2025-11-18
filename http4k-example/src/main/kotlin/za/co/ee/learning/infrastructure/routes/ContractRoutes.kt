@@ -3,8 +3,7 @@ package za.co.ee.learning.infrastructure.routes
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.OpenApi3
-import org.http4k.core.HttpHandler
-import org.http4k.format.KotlinxSerialization
+import org.http4k.format.Jackson
 import za.co.ee.learning.domain.security.JWTProvider
 import za.co.ee.learning.domain.security.PasswordProvider
 import za.co.ee.learning.domain.users.UserRepository
@@ -20,7 +19,7 @@ class ContractRoutes(
     private val authenticateEndpoint = AuthenticateEndpoint(userRepository, passwordProvider, jwtProvider)
     private val getUsersEndpoint = GetUsersEndpoint(userRepository)
 
-    val routes: HttpHandler =
+    val routes =
         contract {
             renderer =
                 OpenApi3(
@@ -30,7 +29,7 @@ class ContractRoutes(
                             version = "1.0.0",
                             description = "Example API demonstrating http4k with JWT authentication",
                         ),
-                    json = KotlinxSerialization,
+                    json = Jackson,
                 )
             descriptionPath = "/openapi.json"
 

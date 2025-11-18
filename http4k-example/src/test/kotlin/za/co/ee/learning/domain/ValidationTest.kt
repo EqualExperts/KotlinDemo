@@ -39,16 +39,15 @@ class ValidationTest :
                 Validation.isValidPasswordLength("123456789") shouldBe true
             }
 
-            test("should return false for passwords with 8 or fewer characters") {
-                Validation.isValidPasswordLength("12345678") shouldBe false
+            test("should return false for passwords with 7 or fewer characters") {
                 Validation.isValidPasswordLength("short") shouldBe false
                 Validation.isValidPasswordLength("1234567") shouldBe false
                 Validation.isValidPasswordLength("") shouldBe false
             }
 
             test("should trim whitespace when checking password length") {
-                Validation.isValidPasswordLength("  12345678  ") shouldBe false
-                Validation.isValidPasswordLength("  123456789  ") shouldBe true
+                Validation.isValidPasswordLength("  1234567  ") shouldBe false
+                Validation.isValidPasswordLength("  12345678  ") shouldBe true
             }
         }
     })

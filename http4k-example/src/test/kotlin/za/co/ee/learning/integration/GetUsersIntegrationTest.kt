@@ -3,11 +3,11 @@ package za.co.ee.learning.integration
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.kotest.matchers.collections.shouldNotBeEmpty
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.ints.shouldBeGreaterThan
+import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.string.shouldStartWith
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.notNullValue
@@ -58,7 +58,7 @@ class GetUsersIntegrationTest : BaseIntegrationTest() {
 
                 val users = response.jsonPath().getList<Any>("$")
                 users.shouldNotBeEmpty()
-                users.size shouldBe greaterThan(0)
+                users.size shouldBeGreaterThan 0
             }
 
             test("should return users with id and email fields") {
@@ -100,8 +100,8 @@ class GetUsersIntegrationTest : BaseIntegrationTest() {
                         .response()
 
                 val responseBody = response.asString()
-                responseBody shouldBe not(containsString("passwordHash"))
-                responseBody shouldBe not(containsString("password123"))
+                responseBody shouldNotContain "passwordHash"
+                responseBody shouldNotContain "password123"
             }
 
             test("should return JSON array") {

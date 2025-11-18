@@ -1,10 +1,10 @@
 package za.co.ee.learning.integration
 
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.ints.shouldBeGreaterThan
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotBeBlank
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.notNullValue
 
@@ -38,7 +38,7 @@ class EndToEndFlowIntegrationTest : BaseIntegrationTest() {
                         .response()
 
                 val users = usersResponse.jsonPath().getList<Any>("$")
-                users.size shouldBe greaterThan(0)
+                users.size shouldBeGreaterThan 0
             }
 
             test("should fail to access protected resource without authentication first") {
@@ -77,7 +77,7 @@ class EndToEndFlowIntegrationTest : BaseIntegrationTest() {
                             .response()
 
                     val users = response.jsonPath().getList<Any>("$")
-                    users.size shouldBe greaterThan(0)
+                    users.size shouldBeGreaterThan 0
                 }
             }
 
@@ -113,7 +113,7 @@ class EndToEndFlowIntegrationTest : BaseIntegrationTest() {
 
                 // Check for CORS headers
                 val accessControlAllowOrigin = response.header("access-control-allow-origin")
-                accessControlAllowOrigin shouldBe notNullValue()
+                accessControlAllowOrigin shouldNotBe null
             }
 
             test("should include CORS headers on authenticated endpoints") {
@@ -141,7 +141,7 @@ class EndToEndFlowIntegrationTest : BaseIntegrationTest() {
                         .response()
 
                 val accessControlAllowOrigin = response.header("access-control-allow-origin")
-                accessControlAllowOrigin shouldBe notNullValue()
+                accessControlAllowOrigin shouldNotBe null
             }
         }
 

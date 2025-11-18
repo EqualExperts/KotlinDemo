@@ -1,12 +1,10 @@
 package za.co.ee.learning.domain
 
 import arrow.core.Either
-import kotlinx.serialization.Serializable
 import org.http4k.core.Status
 
 typealias DomainResult<T> = Either<DomainError, T>
 
-@Serializable
 data class Problem(
     val title: String,
     val status: Int,

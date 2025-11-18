@@ -1,4 +1,4 @@
-package za.co.ee.learning
+package za.co.ee.learning.infrastructure.config
 
 data class ServerConfig(
     val port: Int = 8080,

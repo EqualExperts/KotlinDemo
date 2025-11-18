@@ -1,11 +1,9 @@
 package za.co.ee.learning.domain.users.usecases
 
 import arrow.core.raise.either
-import kotlinx.serialization.Serializable
 import za.co.ee.learning.domain.DomainResult
 import za.co.ee.learning.domain.users.UserRepository
 
-@Serializable
 data class UserDto(
     val id: String,
     val email: String,

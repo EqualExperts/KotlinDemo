@@ -3,8 +3,8 @@ package za.co.ee.learning.integration
 import io.kotest.core.spec.style.FunSpec
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
-import za.co.ee.learning.Server
-import za.co.ee.learning.ServerConfig
+import za.co.ee.learning.infrastructure.config.ServerConfig
+import za.co.ee.learning.infrastructure.server.Server
 
 abstract class BaseIntegrationTest : FunSpec() {
     private var server: Server? = null
