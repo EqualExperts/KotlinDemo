@@ -33,7 +33,9 @@ class ContractRoutes(
                 )
             descriptionPath = "/openapi.json"
 
-            routes += HealthEndpoint.route
+            routes += HealthEndpoint.healthRoute
+            routes += HealthEndpoint.readinessRoute
+            routes += HealthEndpoint.livenessRoute
             routes += authenticateEndpoint.route
             routes += getUsersEndpoint.route
         }

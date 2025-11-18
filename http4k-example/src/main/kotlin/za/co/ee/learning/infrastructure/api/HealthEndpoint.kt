@@ -29,7 +29,7 @@ object HealthEndpoint {
         )
     }
 
-    val route: ContractRoute =
+    val healthRoute: ContractRoute =
         "/health" meta {
             summary = "Health Check"
             description = "Returns the health status of the API"
@@ -39,4 +39,24 @@ object HealthEndpoint {
                 "Successful health check",
             )
         } bindContract Method.GET to handler
+
+    val livenessRoute: ContractRoute =
+        "/health/live" meta {
+            summary = "Liveness Probe"
+            description = "Kubernetes liveness probe - returns 200 if service is running"
+            returning(Status.OK, healthResponseLens to HealthResponse("UP", "http4k-api"))
+        } bindContract Method.GET to { _: Request ->
+            Response(Status.OK).with(healthLens of HealthResponse("UP", "http4k-api"))
+        }
+
+
+    val readinessRoute: ContractRoute =
+        "/health/ready" meta {
+            summary = "Readiness Probe"
+            description = "Kubernetes readiness probe - returns 200 if service is ready to accept traffic"
+            returning(Status.OK, healthResponseLens to HealthResponse("READY", "http4k-api"))
+        } bindContract Method.GET to { _: Request ->
+            // Could check database connection here in the future
+            Response(Status.OK).with(healthLens of HealthResponse("READY", "http4k-api"))
+        }
 }
