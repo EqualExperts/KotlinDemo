@@ -18,10 +18,10 @@ class InMemoryUserRepository : UserRepository {
     }
 
     // Find the first user in the list that has the matching email, wrap it in an option and return a Either.right()
-    override fun findByEmail(email: String): DomainResult<User> =
+    override fun findByEmail(email: String): DomainResult<Option<User>> =
         Option
             .fromNullable(users.firstOrNull { it.email == email })
-            .toEither { DomainError.InvalidCredentials }
+            .right()
 
     override fun findAll(): DomainResult<List<User>> = users.toList().right()
 }

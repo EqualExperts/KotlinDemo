@@ -30,10 +30,11 @@ class Authenticate(
     operator fun invoke(request: AuthenticateRequest): DomainResult<AuthenticateResponse> =
         either {
             val validatedRequest = validate(request).bind()
-            val user = userRepository.findByEmail(validatedRequest.email).bind()
+            val userOption = userRepository.findByEmail(validatedRequest.email).bind()
+            val user = userOption.toEither { DomainError.InvalidCredentials }.bind()
             val pwdHashString = user.passwordHash.bind()
-            checkPassword(pwdHashString, validatedRequest).bind()
-            createToken(user).bind()
+            val authenticatedUser = authenticateUser(user, pwdHashString, validatedRequest).bind()
+            createToken(authenticatedUser).bind()
         }
 
     private fun validate(request: AuthenticateRequest): DomainResult<AuthenticateRequest> {
@@ -56,14 +57,14 @@ class Authenticate(
         return request.right()
     }
 
-    private fun checkPassword(
+    private fun authenticateUser(
+        user: User,
         passwordHash: String,
         validatedRequest: AuthenticateRequest,
-    ): DomainResult<Boolean> {
+    ): DomainResult<User> {
         if (passwordProvider.matches(validatedRequest.password, passwordHash)) {
-            return true.right()
+            return user.right()
         }
-
         return DomainError.InvalidCredentials.left()
     }
 

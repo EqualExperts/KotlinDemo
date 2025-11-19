@@ -32,18 +32,20 @@ class AuthenticateEndpointTest :
 
         val validEmail = "user@example.com"
         val validPassword = "SecurePass123"
-        val passwordHash = Either.Right("hashed_password")
+        val passwordHash = "hashed_password"
         val testUser =
             User(
                 id = UUID.randomUUID(),
                 email = validEmail,
-                passwordHash = passwordHash,
+                passwordHash = Either.Right(passwordHash),
             )
+        val testToken = "jwt.token.here"
+        val testExpires = 1234567890L
         val tokenInfo =
             Either.Right(
                 TokenInfo(
-                    token = "jwt.token.here",
-                    expires = 1234567890L,
+                    token = testToken,
+                    expires = testExpires,
                 )
             )
         beforeTest {
@@ -55,18 +57,18 @@ class AuthenticateEndpointTest :
                 val requestBody = """{"email":"$validEmail","password":"$validPassword"}"""
                 val request = Request(Method.POST, "/auth/login").body(requestBody)
 
-                every { userRepository.findByEmail(validEmail) } returns testUser.right()
-                every { passwordProvider.matches(validPassword, passwordHash.getOrNull()!!) } returns true
+                every { userRepository.findByEmail(validEmail) } returns testUser.some().right()
+                every { passwordProvider.matches(validPassword, passwordHash) } returns true
                 every { jwtProvider.generate(testUser) } returns tokenInfo
 
                 val response = endpoint.handler(request)
 
                 response.status shouldBe Status.OK
-                response.bodyString() shouldContain "\"token\":\"${tokenInfo.getOrNull()!!.token}\""
-                response.bodyString() shouldContain "\"expires\":${tokenInfo.getOrNull()!!.expires}"
+                response.bodyString() shouldContain "\"token\":\"$testToken\""
+                response.bodyString() shouldContain "\"expires\":$testExpires"
 
                 verify { userRepository.findByEmail(validEmail) }
-                verify { passwordProvider.matches(validPassword, passwordHash.getOrNull()!!) }
+                verify { passwordProvider.matches(validPassword, passwordHash) }
                 verify { jwtProvider.generate(testUser) }
             }
         }
@@ -118,7 +120,7 @@ class AuthenticateEndpointTest :
                 val requestBody = """{"email":"nonexistent@example.com","password":"$validPassword"}"""
                 val request = Request(Method.POST, "/auth/login").body(requestBody)
 
-                every { userRepository.findByEmail("nonexistent@example.com") } returns Either.Left(DomainError.InvalidCredentials)
+                every { userRepository.findByEmail("nonexistent@example.com") } returns arrow.core.none<User>().right()
 
                 val response = endpoint.handler(request)
 
@@ -132,8 +134,8 @@ class AuthenticateEndpointTest :
                 val requestBody = """{"email":"$validEmail","password":"WrongPassword123"}"""
                 val request = Request(Method.POST, "/auth/login").body(requestBody)
 
-                every { userRepository.findByEmail(validEmail) } returns testUser.right()
-                every { passwordProvider.matches("WrongPassword123", passwordHash.getOrNull()!!) } returns false
+                every { userRepository.findByEmail(validEmail) } returns testUser.some().right()
+                every { passwordProvider.matches("WrongPassword123", passwordHash) } returns false
 
                 val response = endpoint.handler(request)
 
@@ -141,7 +143,7 @@ class AuthenticateEndpointTest :
                 response.bodyString() shouldContain "Invalid email or password"
 
                 verify { userRepository.findByEmail(validEmail) }
-                verify { passwordProvider.matches("WrongPassword123", passwordHash.getOrNull()!!) }
+                verify { passwordProvider.matches("WrongPassword123", passwordHash) }
             }
         }
 
@@ -167,8 +169,8 @@ class AuthenticateEndpointTest :
                 val requestBody = """{"email":"$validEmail","password":"$validPassword"}"""
                 val request = Request(Method.POST, "/auth/login").body(requestBody)
 
-                every { userRepository.findByEmail(validEmail) } returns testUser.right()
-                every { passwordProvider.matches(validPassword, passwordHash.getOrNull()!!) } returns true
+                every { userRepository.findByEmail(validEmail) } returns testUser.some().right()
+                every { passwordProvider.matches(validPassword, passwordHash) } returns true
                 every { jwtProvider.generate(testUser) } returns tokenInfo
 
                 val response = endpoint.handler(request)

@@ -29,18 +29,20 @@ class AuthenticateTest :
 
         val validEmail = "user@example.com"
         val validPassword = "SecurePass123"
-        val passwordHash = Either.Right("hashed_password")
+        val passwordHash = "hashed_password"
         val testUser =
             User(
                 id = UUID.randomUUID(),
                 email = validEmail,
-                passwordHash = passwordHash,
+                passwordHash = Either.Right(passwordHash),
             )
+        val testToken = "jwt.token.here"
+        val testExpires = 1234567890L
         val tokenInfo =
             Either.Right(
                 TokenInfo(
-                    token = "jwt.token.here",
-                    expires = 1234567890L,
+                    token = testToken,
+                    expires = testExpires,
                 )
             )
 
@@ -52,8 +54,8 @@ class AuthenticateTest :
             test("should return token when credentials are valid") {
                 val request = AuthenticateRequest(email = validEmail, password = validPassword)
 
-                every { userRepository.findByEmail(validEmail) } returns testUser.right()
-                every { passwordProvider.matches(validPassword, passwordHash.getOrNull()!!) } returns true
+                every { userRepository.findByEmail(validEmail) } returns testUser.some().right()
+                every { passwordProvider.matches(validPassword, passwordHash) } returns true
                 every { jwtProvider.generate(testUser) } returns tokenInfo
 
                 val result = authenticate(request)
@@ -61,12 +63,12 @@ class AuthenticateTest :
                 val value = result.shouldBeRight()
                 value shouldBe
                         AuthenticateResponse(
-                            token = tokenInfo.getOrNull()!!.token,
-                            expires = tokenInfo.getOrNull()!!.expires,
+                            token = testToken,
+                            expires = testExpires,
                         )
 
                 verify { userRepository.findByEmail(validEmail) }
-                verify { passwordProvider.matches(validPassword, passwordHash.getOrNull()!!) }
+                verify { passwordProvider.matches(validPassword, passwordHash) }
                 verify { jwtProvider.generate(testUser) }
             }
         }
@@ -116,7 +118,7 @@ class AuthenticateTest :
             test("should return InvalidCredentials when user does not exist") {
                 val request = AuthenticateRequest(email = "nonexistent@example.com", password = validPassword)
 
-                every { userRepository.findByEmail("nonexistent@example.com") } returns Either.Left(DomainError.InvalidCredentials)
+                every { userRepository.findByEmail("nonexistent@example.com") } returns arrow.core.none<User>().right()
 
                 val result = authenticate(request)
 
@@ -129,7 +131,7 @@ class AuthenticateTest :
             test("should return InvalidCredentials when repository returns None") {
                 val request = AuthenticateRequest(email = validEmail, password = validPassword)
 
-                every { userRepository.findByEmail(validEmail) } returns Either.Left(DomainError.InvalidCredentials)
+                every { userRepository.findByEmail(validEmail) } returns arrow.core.none<User>().right()
 
                 val result = authenticate(request)
 
@@ -142,8 +144,8 @@ class AuthenticateTest :
             test("should return InvalidCredentials when password does not match") {
                 val request = AuthenticateRequest(email = validEmail, password = "WrongPassword123")
 
-                every { userRepository.findByEmail(validEmail) } returns testUser.right()
-                every { passwordProvider.matches("WrongPassword123", passwordHash.getOrNull()!!) } returns false
+                every { userRepository.findByEmail(validEmail) } returns testUser.some().right()
+                every { passwordProvider.matches("WrongPassword123", passwordHash) } returns false
 
                 val result = authenticate(request)
 
@@ -151,7 +153,7 @@ class AuthenticateTest :
                 error shouldBe DomainError.InvalidCredentials
 
                 verify { userRepository.findByEmail(validEmail) }
-                verify { passwordProvider.matches("WrongPassword123", passwordHash.getOrNull()!!) }
+                verify { passwordProvider.matches("WrongPassword123", passwordHash) }
             }
         }
 

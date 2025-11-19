@@ -1,5 +1,6 @@
 package za.co.ee.learning.infrastructure.security
 
+import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -15,8 +16,9 @@ class BCryptPasswordProviderTest :
 
                 val hash = passwordProvider.encode(password)
 
-                hash.getOrNull()!! shouldStartWith "\$2a\$"
-                hash.getOrNull()!!.length shouldBe 60
+                val hashResult = hash.shouldBeRight()
+                hashResult shouldStartWith "\$2a\$"
+                hashResult.length shouldBe 60
             }
 
             test("should generate different hashes for the same password") {
@@ -42,17 +44,17 @@ class BCryptPasswordProviderTest :
                 val password = ""
 
                 val hash = passwordProvider.encode(password)
-
-                hash.getOrNull()!! shouldStartWith "\$2a\$"
+                val hashResult = hash.shouldBeRight()
+                hashResult shouldStartWith "\$2a\$"
             }
         }
 
         context("matches") {
             test("should return true when password matches hash") {
                 val password = "correctPassword123"
-                val hash = passwordProvider.encode(password)
+                val hash = passwordProvider.encode(password).shouldBeRight()
 
-                val result = passwordProvider.matches(password, hash.getOrNull()!!)
+                val result = passwordProvider.matches(password, hash)
 
                 result shouldBe true
             }
@@ -60,36 +62,36 @@ class BCryptPasswordProviderTest :
             test("should return false when password does not match hash") {
                 val correctPassword = "correctPassword123"
                 val wrongPassword = "wrongPassword456"
-                val hash = passwordProvider.encode(correctPassword)
+                val hash = passwordProvider.encode(correctPassword).shouldBeRight()
 
-                val result = passwordProvider.matches(wrongPassword, hash.getOrNull()!!)
+                val result = passwordProvider.matches(wrongPassword, hash)
 
                 result shouldBe false
             }
 
             test("should return false for empty password when hash is for non-empty password") {
                 val password = "actualPassword"
-                val hash = passwordProvider.encode(password)
+                val hash = passwordProvider.encode(password).shouldBeRight()
 
-                val result = passwordProvider.matches("", hash.getOrNull()!!)
+                val result = passwordProvider.matches("", hash)
 
                 result shouldBe false
             }
 
             test("should be case sensitive") {
                 val password = "Password123"
-                val hash = passwordProvider.encode(password)
+                val hash = passwordProvider.encode(password).shouldBeRight()
 
-                val result = passwordProvider.matches("password123", hash.getOrNull()!!)
+                val result = passwordProvider.matches("password123", hash)
 
                 result shouldBe false
             }
 
             test("should handle special characters in password") {
                 val password = "P@ssw0rd!#\$%^&*()"
-                val hash = passwordProvider.encode(password)
+                val hash = passwordProvider.encode(password).shouldBeRight()
 
-                val result = passwordProvider.matches(password, hash.getOrNull()!!)
+                val result = passwordProvider.matches(password, hash)
 
                 result shouldBe true
             }
