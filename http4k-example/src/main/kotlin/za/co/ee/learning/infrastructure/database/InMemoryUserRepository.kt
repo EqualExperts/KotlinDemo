@@ -1,7 +1,9 @@
 package za.co.ee.learning.infrastructure.database
 
+import arrow.core.Either
 import arrow.core.Option
 import arrow.core.right
+import za.co.ee.learning.domain.DomainError
 import za.co.ee.learning.domain.DomainResult
 import za.co.ee.learning.domain.users.User
 import za.co.ee.learning.domain.users.UserRepository
@@ -16,10 +18,10 @@ class InMemoryUserRepository : UserRepository {
     }
 
     // Find the first user in the list that has the matching email, wrap it in an option and return a Either.right()
-    override fun findByEmail(email: String): DomainResult<Option<User>> =
+    override fun findByEmail(email: String): DomainResult<User> =
         Option
             .fromNullable(users.firstOrNull { it.email == email })
-            .right()
+            .toEither { DomainError.InvalidCredentials }
 
     override fun findAll(): DomainResult<List<User>> = users.toList().right()
 }

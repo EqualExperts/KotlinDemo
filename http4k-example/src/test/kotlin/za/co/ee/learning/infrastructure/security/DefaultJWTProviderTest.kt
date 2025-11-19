@@ -1,5 +1,6 @@
 package za.co.ee.learning.infrastructure.security
 
+import arrow.core.Either
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.kotest.assertions.arrow.core.shouldBeLeft
@@ -27,28 +28,28 @@ class DefaultJWTProviderTest :
             User(
                 id = UUID.randomUUID(),
                 email = "test@example.com",
-                passwordHash = "hash",
+                passwordHash = Either.Right("hash"),
             )
 
         context("generate") {
             test("should generate a valid JWT token") {
                 val tokenInfo = jwtProvider.generate(testUser)
 
-                tokenInfo.token shouldContain "."
-                tokenInfo.expires shouldBeGreaterThan Instant.now().epochSecond
+                tokenInfo.getOrNull()!!.token shouldContain "."
+                tokenInfo.getOrNull()!!.expires shouldBeGreaterThan Instant.now().epochSecond
             }
 
             test("should include correct issuer in token") {
                 val tokenInfo = jwtProvider.generate(testUser)
 
-                val decodedJWT = JWT.decode(tokenInfo.token)
+                val decodedJWT = JWT.decode(tokenInfo.getOrNull()!!.token)
                 decodedJWT.issuer shouldBe issuer
             }
 
             test("should include user ID as subject in token") {
                 val tokenInfo = jwtProvider.generate(testUser)
 
-                val decodedJWT = JWT.decode(tokenInfo.token)
+                val decodedJWT = JWT.decode(tokenInfo.getOrNull()!!.token)
                 decodedJWT.subject shouldBe testUser.id.toString()
             }
 
@@ -58,14 +59,14 @@ class DefaultJWTProviderTest :
 
                 // Expiration should be approximately expirationSeconds from now
                 // Allow for 2 seconds of tolerance
-                tokenInfo.expires shouldBeGreaterThan beforeGeneration + expirationSeconds - 2
+                tokenInfo.getOrNull()!!.expires shouldBeGreaterThan beforeGeneration + expirationSeconds - 2
             }
 
             test("should include issued at timestamp") {
                 val beforeGeneration = Instant.now().epochSecond
                 val tokenInfo = jwtProvider.generate(testUser)
 
-                val decodedJWT = JWT.decode(tokenInfo.token)
+                val decodedJWT = JWT.decode(tokenInfo.getOrNull()!!.token)
                 val issuedAt = decodedJWT.issuedAt.toInstant().epochSecond
 
                 issuedAt shouldBeGreaterThan beforeGeneration - 1
@@ -76,7 +77,7 @@ class DefaultJWTProviderTest :
             test("should successfully verify a valid token") {
                 val tokenInfo = jwtProvider.generate(testUser)
 
-                val result = jwtProvider.verify(tokenInfo.token)
+                val result = jwtProvider.verify(tokenInfo.getOrNull()!!.token)
 
                 val userId = result.shouldBeRight()
                 userId shouldBe testUser.id
@@ -90,7 +91,7 @@ class DefaultJWTProviderTest :
                 // Wait a bit to ensure token is expired
                 Thread.sleep(1000)
 
-                val result = jwtProvider.verify(tokenInfo.token)
+                val result = jwtProvider.verify(tokenInfo.getOrNull()!!.token)
 
                 val error = result.shouldBeLeft()
                 error.shouldBeInstanceOf<DomainError.JWTError>()
@@ -101,7 +102,7 @@ class DefaultJWTProviderTest :
                 val differentSecretProvider = DefaultJWTProvider("different-secret", issuer, expirationSeconds)
                 val tokenInfo = differentSecretProvider.generate(testUser)
 
-                val result = jwtProvider.verify(tokenInfo.token)
+                val result = jwtProvider.verify(tokenInfo.getOrNull()!!.token)
 
                 val error = result.shouldBeLeft()
                 error.shouldBeInstanceOf<DomainError.JWTError>()
@@ -128,7 +129,7 @@ class DefaultJWTProviderTest :
                 val wrongIssuerProvider = DefaultJWTProvider(secret, "wrong-issuer", expirationSeconds)
                 val tokenInfo = wrongIssuerProvider.generate(testUser)
 
-                val result = jwtProvider.verify(tokenInfo.token)
+                val result = jwtProvider.verify(tokenInfo.getOrNull()!!.token)
 
                 val error = result.shouldBeLeft()
                 error.shouldBeInstanceOf<DomainError.JWTError>()

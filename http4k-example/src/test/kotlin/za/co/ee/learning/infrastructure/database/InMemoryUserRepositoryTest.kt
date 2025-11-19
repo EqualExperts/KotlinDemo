@@ -1,10 +1,13 @@
 package za.co.ee.learning.infrastructure.database
 
+import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.assertions.arrow.core.shouldBeSome
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldHaveAtLeastSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import za.co.ee.learning.domain.DomainError
 
 class InMemoryUserRepositoryTest :
     FunSpec({
@@ -24,24 +27,22 @@ class InMemoryUserRepositoryTest :
             test("should return Some when user exists") {
                 val result = repository.findByEmail("admin@local.com")
 
-                val option = result.shouldBeRight()
-                val user = option.shouldBeSome()
+                val user = result.shouldBeRight()
                 user.email shouldBe "admin@local.com"
             }
 
             test("should have password hash for existing user") {
                 val result = repository.findByEmail("admin@local.com")
 
-                val option = result.shouldBeRight()
-                val user = option.shouldBeSome()
-                user.passwordHash.isNotEmpty() shouldBe true
+                val user = result.shouldBeRight()
+                user.passwordHash.getOrNull()!!.isNotEmpty() shouldBe true
             }
 
             test("should return None for non-existent user") {
                 val result = repository.findByEmail("nonexistent@example.com")
 
-                val option = result.shouldBeRight()
-                option.isNone() shouldBe true
+                val err = result.shouldBeLeft()
+                err shouldBeSameInstanceAs DomainError.InvalidCredentials
             }
         }
 

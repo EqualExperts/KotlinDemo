@@ -3,6 +3,7 @@ package za.co.ee.learning.infrastructure.security
 import arrow.core.raise.either
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.JWTCreationException
 import com.auth0.jwt.exceptions.JWTVerificationException
 import za.co.ee.learning.domain.DomainError
 import za.co.ee.learning.domain.DomainResult
@@ -10,8 +11,7 @@ import za.co.ee.learning.domain.security.JWTProvider
 import za.co.ee.learning.domain.security.TokenInfo
 import za.co.ee.learning.domain.users.User
 import java.time.Instant
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 class DefaultJWTProvider(
     private val secret: String,
@@ -26,24 +26,30 @@ class DefaultJWTProvider(
             .withIssuer(issuer)
             .build()
 
-    override fun generate(user: User): TokenInfo {
-        val now = Instant.now()
-        val expiresAt = now.plusSeconds(expirationSeconds)
+    override fun generate(user: User): DomainResult<TokenInfo> =
+        either {
+            try {
+                val now = Instant.now()
+                val expiresAt = now.plusSeconds(expirationSeconds)
 
-        val token =
-            JWT
-                .create()
-                .withIssuer(issuer)
-                .withSubject(user.id.toString())
-                .withIssuedAt(Date.from(now))
-                .withExpiresAt(Date.from(expiresAt))
-                .sign(algorithm)
+                val token = JWT
+                    .create()
+                    .withIssuer(issuer)
+                    .withSubject(user.id.toString())
+                    .withIssuedAt(Date.from(now))
+                    .withExpiresAt(Date.from(expiresAt))
+                    .sign(algorithm)
 
-        return TokenInfo(
-            token = token,
-            expires = expiresAt.epochSecond,
-        )
-    }
+                TokenInfo(
+                    token = token,
+                    expires = expiresAt.epochSecond,
+                )
+            } catch (e: JWTCreationException) {
+                raise(DomainError.JWTError("Token creation error: ${e.message}"))
+            } catch (e: Exception) {
+                raise(DomainError.JWTError("Token creation failed: ${e.message}"))
+            }
+        }
 
     override fun verify(jwt: String): DomainResult<UUID> =
         either {

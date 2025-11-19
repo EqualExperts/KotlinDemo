@@ -10,7 +10,7 @@ data class TokenInfo(
 )
 
 interface JWTProvider {
-    fun generate(user: User): TokenInfo
+    fun generate(user: User): DomainResult<TokenInfo>
 
     fun verify(jwt: String): DomainResult<UUID>
 }

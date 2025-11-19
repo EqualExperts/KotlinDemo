@@ -15,8 +15,8 @@ class BCryptPasswordProviderTest :
 
                 val hash = passwordProvider.encode(password)
 
-                hash shouldStartWith "\$2a\$"
-                hash.length shouldBe 60
+                hash.getOrNull()!! shouldStartWith "\$2a\$"
+                hash.getOrNull()!!.length shouldBe 60
             }
 
             test("should generate different hashes for the same password") {
@@ -43,7 +43,7 @@ class BCryptPasswordProviderTest :
 
                 val hash = passwordProvider.encode(password)
 
-                hash shouldStartWith "\$2a\$"
+                hash.getOrNull()!! shouldStartWith "\$2a\$"
             }
         }
 
@@ -52,7 +52,7 @@ class BCryptPasswordProviderTest :
                 val password = "correctPassword123"
                 val hash = passwordProvider.encode(password)
 
-                val result = passwordProvider.matches(password, hash)
+                val result = passwordProvider.matches(password, hash.getOrNull()!!)
 
                 result shouldBe true
             }
@@ -62,7 +62,7 @@ class BCryptPasswordProviderTest :
                 val wrongPassword = "wrongPassword456"
                 val hash = passwordProvider.encode(correctPassword)
 
-                val result = passwordProvider.matches(wrongPassword, hash)
+                val result = passwordProvider.matches(wrongPassword, hash.getOrNull()!!)
 
                 result shouldBe false
             }
@@ -71,7 +71,7 @@ class BCryptPasswordProviderTest :
                 val password = "actualPassword"
                 val hash = passwordProvider.encode(password)
 
-                val result = passwordProvider.matches("", hash)
+                val result = passwordProvider.matches("", hash.getOrNull()!!)
 
                 result shouldBe false
             }
@@ -80,7 +80,7 @@ class BCryptPasswordProviderTest :
                 val password = "Password123"
                 val hash = passwordProvider.encode(password)
 
-                val result = passwordProvider.matches("password123", hash)
+                val result = passwordProvider.matches("password123", hash.getOrNull()!!)
 
                 result shouldBe false
             }
@@ -89,7 +89,7 @@ class BCryptPasswordProviderTest :
                 val password = "P@ssw0rd!#\$%^&*()"
                 val hash = passwordProvider.encode(password)
 
-                val result = passwordProvider.matches(password, hash)
+                val result = passwordProvider.matches(password, hash.getOrNull()!!)
 
                 result shouldBe true
             }
