@@ -43,7 +43,7 @@ class AuthenticateTest :
                 TokenInfo(
                     token = testToken,
                     expires = testExpires,
-                )
+                ),
             )
 
         beforeTest {
@@ -62,10 +62,10 @@ class AuthenticateTest :
 
                 val value = result.shouldBeRight()
                 value shouldBe
-                        AuthenticateResponse(
-                            token = testToken,
-                            expires = testExpires,
-                        )
+                    AuthenticateResponse(
+                        token = testToken,
+                        expires = testExpires,
+                    )
 
                 verify { userRepository.findByEmail(validEmail) }
                 verify { passwordProvider.matches(validPassword, passwordHash) }

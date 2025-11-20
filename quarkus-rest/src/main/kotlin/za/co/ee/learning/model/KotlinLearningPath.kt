@@ -8,6 +8,5 @@ package za.co.ee.learning.model
  */
 data class KotlinLearningPath(
     var name: String,
-
-    var resources: MutableMap<String, String> = mutableMapOf()
+    var resources: MutableMap<String, String> = mutableMapOf(),
 )

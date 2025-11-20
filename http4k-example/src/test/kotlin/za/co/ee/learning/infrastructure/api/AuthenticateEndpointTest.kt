@@ -46,7 +46,7 @@ class AuthenticateEndpointTest :
                 TokenInfo(
                     token = testToken,
                     expires = testExpires,
-                )
+                ),
             )
         beforeTest {
             clearAllMocks()

@@ -2,7 +2,15 @@ package za.co.ee.learning.resource
 
 import io.smallrye.common.annotation.RunOnVirtualThread
 import jakarta.inject.Inject
-import jakarta.ws.rs.*
+import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
+import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import za.co.ee.learning.model.KotlinLearningPath
@@ -16,7 +24,6 @@ import za.co.ee.learning.service.LearningPathService
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED)
 class LearningPathResource {
-
     @Inject
     lateinit var learningPathService: LearningPathService
 
@@ -40,7 +47,9 @@ class LearningPathResource {
     @PUT
     @Path("/name/{name}")
     @RunOnVirtualThread
-    fun updateName(@PathParam("name") name: String): KotlinLearningPath {
+    fun updateName(
+        @PathParam("name") name: String,
+    ): KotlinLearningPath {
         return learningPathService.updateName(name)
     }
 
@@ -54,7 +63,10 @@ class LearningPathResource {
     @PUT
     @Path("/resource")
     @RunOnVirtualThread
-    fun addOrUpdateResource(@QueryParam("name") name: String?, @QueryParam("url") url: String?): Response {
+    fun addOrUpdateResource(
+        @QueryParam("name") name: String?,
+        @QueryParam("url") url: String?,
+    ): Response {
         if (name.isNullOrBlank() || url.isNullOrBlank()) {
             return Response.status(Response.Status.BAD_REQUEST)
                 .entity("Both name and url parameters are required")
@@ -79,7 +91,9 @@ class LearningPathResource {
     @DELETE
     @Path("/resource/{name}")
     @RunOnVirtualThread
-    fun removeResource(@PathParam("name") name: String): KotlinLearningPath {
+    fun removeResource(
+        @PathParam("name") name: String,
+    ): KotlinLearningPath {
         return learningPathService.removeResource(name)
     }
 

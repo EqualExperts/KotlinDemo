@@ -11,7 +11,8 @@ import za.co.ee.learning.domain.security.JWTProvider
 import za.co.ee.learning.domain.security.TokenInfo
 import za.co.ee.learning.domain.users.User
 import java.time.Instant
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 class DefaultJWTProvider(
     private val secret: String,
@@ -32,13 +33,14 @@ class DefaultJWTProvider(
                 val now = Instant.now()
                 val expiresAt = now.plusSeconds(expirationSeconds)
 
-                val token = JWT
-                    .create()
-                    .withIssuer(issuer)
-                    .withSubject(user.id.toString())
-                    .withIssuedAt(Date.from(now))
-                    .withExpiresAt(Date.from(expiresAt))
-                    .sign(algorithm)
+                val token =
+                    JWT
+                        .create()
+                        .withIssuer(issuer)
+                        .withSubject(user.id.toString())
+                        .withIssuedAt(Date.from(now))
+                        .withExpiresAt(Date.from(expiresAt))
+                        .sign(algorithm)
 
                 TokenInfo(
                     token = token,
