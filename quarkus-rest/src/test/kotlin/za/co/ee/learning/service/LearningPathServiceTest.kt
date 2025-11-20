@@ -1,21 +1,23 @@
 package za.co.ee.learning.service
 
-import io.quarkus.test.junit.QuarkusTest
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import io.mockk.every
 import io.mockk.verify
 import io.quarkiverse.test.junit.mockk.InjectMock
+import io.quarkus.test.junit.QuarkusTest
 import jakarta.inject.Inject
 import org.eclipse.microprofile.rest.client.inject.RestClient
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import za.co.ee.learning.client.UrlValidationRequest
 import za.co.ee.learning.client.UrlValidationResponse
 import za.co.ee.learning.client.UrlValidatorClient
 
 @QuarkusTest
 class LearningPathServiceTest {
-
     @Inject
     private lateinit var learningPathService: LearningPathService
 
@@ -56,8 +58,8 @@ class LearningPathServiceTest {
         val resourceName = "Test Resource"
         val resourceUrl = "https://test.resource.com"
 
-        every { 
-            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl)) 
+        every {
+            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl))
         } returns UrlValidationResponse(resourceName, "Okay")
 
         val updatedPath = learningPathService.addOrUpdateResource(resourceName, resourceUrl)
@@ -66,8 +68,8 @@ class LearningPathServiceTest {
         assertEquals(resourceUrl, updatedPath.resources[resourceName])
 
         // Verify the mock was called with the correct parameters
-        verify { 
-            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl)) 
+        verify {
+            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl))
         }
     }
 
@@ -77,20 +79,21 @@ class LearningPathServiceTest {
         val resourceName = "Invalid Resource"
         val resourceUrl = "invalid-url"
 
-        every { 
-            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl)) 
+        every {
+            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl))
         } returns UrlValidationResponse(resourceName, "Invalid URL")
 
         // The service should throw an InvalidLearningResourceUrl exception
-        val exception = assertThrows(InvalidLearningResourceUrl::class.java) {
-            learningPathService.addOrUpdateResource(resourceName, resourceUrl)
-        }
+        val exception =
+            assertThrows(InvalidLearningResourceUrl::class.java) {
+                learningPathService.addOrUpdateResource(resourceName, resourceUrl)
+            }
 
         assertTrue(exception.message!!.contains("Not a valid learning resource URL"))
 
         // Verify the mock was called
-        verify { 
-            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl)) 
+        verify {
+            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl))
         }
     }
 
@@ -100,20 +103,21 @@ class LearningPathServiceTest {
         val resourceName = "Error Resource"
         val resourceUrl = "http://error.resource"
 
-        every { 
-            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl)) 
+        every {
+            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl))
         } throws RuntimeException("Server error")
 
         // The service should wrap the RuntimeException in a general Exception
-        val exception = assertThrows(Exception::class.java) {
-            learningPathService.addOrUpdateResource(resourceName, resourceUrl)
-        }
+        val exception =
+            assertThrows(Exception::class.java) {
+                learningPathService.addOrUpdateResource(resourceName, resourceUrl)
+            }
 
         assertTrue(exception.message!!.contains("Error while validating the learning resource"))
 
         // Verify the mock was called
-        verify { 
-            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl)) 
+        verify {
+            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl))
         }
     }
 
@@ -123,8 +127,8 @@ class LearningPathServiceTest {
         val resourceName = "Test Resource"
         val resourceUrl = "https://test.resource.com"
 
-        every { 
-            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl)) 
+        every {
+            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl))
         } returns UrlValidationResponse(resourceName, "Okay")
 
         learningPathService.addOrUpdateResource(resourceName, resourceUrl)
@@ -144,8 +148,8 @@ class LearningPathServiceTest {
         val resourceName = "Test Resource"
         val resourceUrl = "https://test.resource.com"
 
-        every { 
-            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl)) 
+        every {
+            urlValidatorClient.validateUrl(UrlValidationRequest(resourceName, resourceUrl))
         } returns UrlValidationResponse(resourceName, "Okay")
 
         learningPathService.addOrUpdateResource(resourceName, resourceUrl)

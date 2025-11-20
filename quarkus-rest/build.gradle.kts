@@ -2,7 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen") version "1.9.22"
+    kotlin("plugin.allopen") version "2.1.20"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     id("io.quarkus")
 }
 
@@ -16,7 +17,7 @@ val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
 dependencies {
-    implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
+    implementation(enforcedPlatform("$quarkusPlatformGroupId:$quarkusPlatformArtifactId:$quarkusPlatformVersion"))
     // Rest Support
     implementation("io.quarkus:quarkus-rest-jackson")
     // Rest Client Support

@@ -59,20 +59,22 @@ class Authenticate(
     private fun authenticateUser(
         user: User,
         validatedRequest: AuthenticateRequest,
-    ): DomainResult<User> = either {
-        val passwordHashString = user.passwordHash.bind()
-        if (passwordProvider.matches(validatedRequest.password, passwordHashString)) {
-            user
-        } else {
-            raise(DomainError.InvalidCredentials)
+    ): DomainResult<User> =
+        either {
+            val passwordHashString = user.passwordHash.bind()
+            if (passwordProvider.matches(validatedRequest.password, passwordHashString)) {
+                user
+            } else {
+                raise(DomainError.InvalidCredentials)
+            }
         }
-    }
 
-    private fun createToken(authenticatedUser: User): DomainResult<AuthenticateResponse> = either {
-        val tokenInfo: TokenInfo = jwtProvider.generate(authenticatedUser).bind()
-        AuthenticateResponse(
-            token = tokenInfo.token,
-            expires = tokenInfo.expires,
-        )
-    }
+    private fun createToken(authenticatedUser: User): DomainResult<AuthenticateResponse> =
+        either {
+            val tokenInfo: TokenInfo = jwtProvider.generate(authenticatedUser).bind()
+            AuthenticateResponse(
+                token = tokenInfo.token,
+                expires = tokenInfo.expires,
+            )
+        }
 }

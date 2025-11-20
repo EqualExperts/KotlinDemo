@@ -11,19 +11,20 @@ import za.co.ee.learning.model.KotlinLearningPath
  */
 @ApplicationScoped
 class LearningPathService {
-
     @RestClient
     private lateinit var urlValidationClient: UrlValidatorClient
 
-    private val defaultLearningPath = KotlinLearningPath(
-        name = "Kotlin Learning Resources",
-        resources = mutableMapOf(
-            "Kotlin Home" to "https://kotlinlang.org/",
-            "Quarkus Home" to "https://quarkus.io/",
-            "Http4k Home" to "https://www.http4k.org/",
-            "Ktor Home" to "https://ktor.io/"
+    private val defaultLearningPath =
+        KotlinLearningPath(
+            name = "Kotlin Learning Resources",
+            resources =
+                mutableMapOf(
+                    "Kotlin Home" to "https://kotlinlang.org/",
+                    "Quarkus Home" to "https://quarkus.io/",
+                    "Http4k Home" to "https://www.http4k.org/",
+                    "Ktor Home" to "https://ktor.io/",
+                ),
         )
-    )
 
     private var learningPath: KotlinLearningPath = defaultLearningPath
 
@@ -55,7 +56,10 @@ class LearningPathService {
      * @return The updated learning path
      * @throws IllegalArgumentException if the URL is invalid
      */
-    fun addOrUpdateResource(name: String, url: String): KotlinLearningPath {
+    fun addOrUpdateResource(
+        name: String,
+        url: String,
+    ): KotlinLearningPath {
         try {
             val urlValidationResponse = urlValidationClient.validateUrl(UrlValidationRequest(name, url))
             if (urlValidationResponse.result != "Okay") {
@@ -63,9 +67,8 @@ class LearningPathService {
             }
             learningPath.resources[name] = url
             return learningPath
-        }
-        catch (r: RuntimeException) {
-            throw Exception("Error while validating the learning resource: cause - ${r} : $url")
+        } catch (r: RuntimeException) {
+            throw Exception("Error while validating the learning resource: cause - $r : $url")
         }
     }
 
@@ -86,15 +89,17 @@ class LearningPathService {
      * @return The reset learning path
      */
     fun resetToDefault(): KotlinLearningPath {
-        learningPath = KotlinLearningPath(
-            name = "Kotlin Learning Resources",
-            resources = mutableMapOf(
-                "Kotlin Home" to "https://kotlinlang.org/",
-                "Quarkus Home" to "https://quarkus.io/",
-                "Http4k Home" to "https://www.http4k.org/",
-                "Ktor Home" to "https://ktor.io/"
+        learningPath =
+            KotlinLearningPath(
+                name = "Kotlin Learning Resources",
+                resources =
+                    mutableMapOf(
+                        "Kotlin Home" to "https://kotlinlang.org/",
+                        "Quarkus Home" to "https://quarkus.io/",
+                        "Http4k Home" to "https://www.http4k.org/",
+                        "Ktor Home" to "https://ktor.io/",
+                    ),
             )
-        )
         return learningPath
     }
 }
