@@ -1,5 +1,6 @@
 package za.co.ee.learning.domain.users.usecases
 
+import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import io.kotest.assertions.arrow.core.shouldBeLeft
@@ -26,13 +27,13 @@ class GetUsersTest :
             User(
                 id = UUID.randomUUID(),
                 email = "user1@example.com",
-                passwordHash = "hash1",
+                passwordHash = Either.Right("hash1"),
             )
         val user2 =
             User(
                 id = UUID.randomUUID(),
                 email = "user2@example.com",
-                passwordHash = "hash2",
+                passwordHash = Either.Right("hash2"),
             )
 
         beforeTest {

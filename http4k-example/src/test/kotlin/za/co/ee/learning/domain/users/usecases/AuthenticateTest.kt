@@ -1,5 +1,6 @@
 package za.co.ee.learning.domain.users.usecases
 
+import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import arrow.core.some
@@ -33,12 +34,16 @@ class AuthenticateTest :
             User(
                 id = UUID.randomUUID(),
                 email = validEmail,
-                passwordHash = passwordHash,
+                passwordHash = Either.Right(passwordHash),
             )
+        val testToken = "jwt.token.here"
+        val testExpires = 1234567890L
         val tokenInfo =
-            TokenInfo(
-                token = "jwt.token.here",
-                expires = 1234567890L,
+            Either.Right(
+                TokenInfo(
+                    token = testToken,
+                    expires = testExpires,
+                )
             )
 
         beforeTest {
@@ -57,10 +62,10 @@ class AuthenticateTest :
 
                 val value = result.shouldBeRight()
                 value shouldBe
-                    AuthenticateResponse(
-                        token = tokenInfo.token,
-                        expires = tokenInfo.expires,
-                    )
+                        AuthenticateResponse(
+                            token = testToken,
+                            expires = testExpires,
+                        )
 
                 verify { userRepository.findByEmail(validEmail) }
                 verify { passwordProvider.matches(validPassword, passwordHash) }

@@ -1,5 +1,6 @@
 package za.co.ee.learning.infrastructure.security
 
+import arrow.core.Either
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.kotest.assertions.arrow.core.shouldBeLeft
@@ -27,26 +28,26 @@ class DefaultJWTProviderTest :
             User(
                 id = UUID.randomUUID(),
                 email = "test@example.com",
-                passwordHash = "hash",
+                passwordHash = Either.Right("hash"),
             )
 
         context("generate") {
             test("should generate a valid JWT token") {
-                val tokenInfo = jwtProvider.generate(testUser)
+                val tokenInfo = jwtProvider.generate(testUser).shouldBeRight()
 
                 tokenInfo.token shouldContain "."
                 tokenInfo.expires shouldBeGreaterThan Instant.now().epochSecond
             }
 
             test("should include correct issuer in token") {
-                val tokenInfo = jwtProvider.generate(testUser)
+                val tokenInfo = jwtProvider.generate(testUser).shouldBeRight()
 
                 val decodedJWT = JWT.decode(tokenInfo.token)
                 decodedJWT.issuer shouldBe issuer
             }
 
             test("should include user ID as subject in token") {
-                val tokenInfo = jwtProvider.generate(testUser)
+                val tokenInfo = jwtProvider.generate(testUser).shouldBeRight()
 
                 val decodedJWT = JWT.decode(tokenInfo.token)
                 decodedJWT.subject shouldBe testUser.id.toString()
@@ -54,7 +55,7 @@ class DefaultJWTProviderTest :
 
             test("should set expiration time correctly") {
                 val beforeGeneration = Instant.now().epochSecond
-                val tokenInfo = jwtProvider.generate(testUser)
+                val tokenInfo = jwtProvider.generate(testUser).shouldBeRight()
 
                 // Expiration should be approximately expirationSeconds from now
                 // Allow for 2 seconds of tolerance
@@ -63,7 +64,7 @@ class DefaultJWTProviderTest :
 
             test("should include issued at timestamp") {
                 val beforeGeneration = Instant.now().epochSecond
-                val tokenInfo = jwtProvider.generate(testUser)
+                val tokenInfo = jwtProvider.generate(testUser).shouldBeRight()
 
                 val decodedJWT = JWT.decode(tokenInfo.token)
                 val issuedAt = decodedJWT.issuedAt.toInstant().epochSecond
@@ -74,7 +75,7 @@ class DefaultJWTProviderTest :
 
         context("verify") {
             test("should successfully verify a valid token") {
-                val tokenInfo = jwtProvider.generate(testUser)
+                val tokenInfo = jwtProvider.generate(testUser).shouldBeRight()
 
                 val result = jwtProvider.verify(tokenInfo.token)
 
@@ -85,7 +86,7 @@ class DefaultJWTProviderTest :
             test("should return error for expired token") {
                 // Create a JWT provider with very short expiration
                 val shortExpirationProvider = DefaultJWTProvider(secret, issuer, -1)
-                val tokenInfo = shortExpirationProvider.generate(testUser)
+                val tokenInfo = shortExpirationProvider.generate(testUser).shouldBeRight()
 
                 // Wait a bit to ensure token is expired
                 Thread.sleep(1000)
@@ -99,7 +100,7 @@ class DefaultJWTProviderTest :
 
             test("should return error for token with invalid signature") {
                 val differentSecretProvider = DefaultJWTProvider("different-secret", issuer, expirationSeconds)
-                val tokenInfo = differentSecretProvider.generate(testUser)
+                val tokenInfo = differentSecretProvider.generate(testUser).shouldBeRight()
 
                 val result = jwtProvider.verify(tokenInfo.token)
 
@@ -126,7 +127,7 @@ class DefaultJWTProviderTest :
 
             test("should return error for token with wrong issuer") {
                 val wrongIssuerProvider = DefaultJWTProvider(secret, "wrong-issuer", expirationSeconds)
-                val tokenInfo = wrongIssuerProvider.generate(testUser)
+                val tokenInfo = wrongIssuerProvider.generate(testUser).shouldBeRight()
 
                 val result = jwtProvider.verify(tokenInfo.token)
 

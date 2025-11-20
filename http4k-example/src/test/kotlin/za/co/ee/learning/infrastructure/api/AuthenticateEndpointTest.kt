@@ -1,5 +1,6 @@
 package za.co.ee.learning.infrastructure.api
 
+import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import arrow.core.some
@@ -36,14 +37,17 @@ class AuthenticateEndpointTest :
             User(
                 id = UUID.randomUUID(),
                 email = validEmail,
-                passwordHash = passwordHash,
+                passwordHash = Either.Right(passwordHash),
             )
+        val testToken = "jwt.token.here"
+        val testExpires = 1234567890L
         val tokenInfo =
-            TokenInfo(
-                token = "jwt.token.here",
-                expires = 1234567890L,
+            Either.Right(
+                TokenInfo(
+                    token = testToken,
+                    expires = testExpires,
+                )
             )
-
         beforeTest {
             clearAllMocks()
         }
@@ -60,8 +64,8 @@ class AuthenticateEndpointTest :
                 val response = endpoint.handler(request)
 
                 response.status shouldBe Status.OK
-                response.bodyString() shouldContain "\"token\":\"${tokenInfo.token}\""
-                response.bodyString() shouldContain "\"expires\":${tokenInfo.expires}"
+                response.bodyString() shouldContain "\"token\":\"$testToken\""
+                response.bodyString() shouldContain "\"expires\":$testExpires"
 
                 verify { userRepository.findByEmail(validEmail) }
                 verify { passwordProvider.matches(validPassword, passwordHash) }

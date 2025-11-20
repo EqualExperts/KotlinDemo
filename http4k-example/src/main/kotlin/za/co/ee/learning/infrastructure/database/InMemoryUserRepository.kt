@@ -1,7 +1,9 @@
 package za.co.ee.learning.infrastructure.database
 
+import arrow.core.Either
 import arrow.core.Option
 import arrow.core.right
+import za.co.ee.learning.domain.DomainError
 import za.co.ee.learning.domain.DomainResult
 import za.co.ee.learning.domain.users.User
 import za.co.ee.learning.domain.users.UserRepository

@@ -1,6 +1,5 @@
 package za.co.ee.learning.domain.users.usecases
 
-import arrow.core.Option
 import arrow.core.left
 import arrow.core.raise.either
 import arrow.core.right
@@ -31,8 +30,9 @@ class Authenticate(
     operator fun invoke(request: AuthenticateRequest): DomainResult<AuthenticateResponse> =
         either {
             val validatedRequest = validate(request).bind()
-            val user = findUser(validatedRequest.email).bind()
-            val authenticatedUser = checkPassword(user, validatedRequest).bind()
+            val userOption = userRepository.findByEmail(validatedRequest.email).bind()
+            val user = userOption.toEither { DomainError.InvalidCredentials }.bind()
+            val authenticatedUser = authenticateUser(user, validatedRequest).bind()
             createToken(authenticatedUser).bind()
         }
 
@@ -56,31 +56,23 @@ class Authenticate(
         return request.right()
     }
 
-    private fun findUser(email: String): DomainResult<User> =
-        either {
-            val optUser: Option<User> = userRepository.findByEmail(email).bind()
-            return optUser.fold(
-                ifEmpty = { DomainError.InvalidCredentials.left() },
-                ifSome = { user -> user.right() },
-            )
-        }
-
-    private fun checkPassword(
+    private fun authenticateUser(
         user: User,
         validatedRequest: AuthenticateRequest,
-    ): DomainResult<User> {
-        if (passwordProvider.matches(validatedRequest.password, user.passwordHash)) {
-            return user.right()
+    ): DomainResult<User> = either {
+        val passwordHashString = user.passwordHash.bind()
+        if (passwordProvider.matches(validatedRequest.password, passwordHashString)) {
+            user
+        } else {
+            raise(DomainError.InvalidCredentials)
         }
-
-        return DomainError.InvalidCredentials.left()
     }
 
-    private fun createToken(authenticatedUser: User): DomainResult<AuthenticateResponse> {
-        val tokenInfo: TokenInfo = jwtProvider.generate(authenticatedUser)
-        return AuthenticateResponse(
+    private fun createToken(authenticatedUser: User): DomainResult<AuthenticateResponse> = either {
+        val tokenInfo: TokenInfo = jwtProvider.generate(authenticatedUser).bind()
+        AuthenticateResponse(
             token = tokenInfo.token,
             expires = tokenInfo.expires,
-        ).right()
+        )
     }
 }

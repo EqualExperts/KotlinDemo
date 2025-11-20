@@ -34,7 +34,8 @@ class InMemoryUserRepositoryTest :
 
                 val option = result.shouldBeRight()
                 val user = option.shouldBeSome()
-                user.passwordHash.isNotEmpty() shouldBe true
+                val pwdHash = user.passwordHash.shouldBeRight()
+                pwdHash.isNotEmpty() shouldBe true
             }
 
             test("should return None for non-existent user") {
